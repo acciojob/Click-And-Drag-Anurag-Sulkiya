@@ -5,6 +5,9 @@ let mouseStartX = 0;
 let mouseStartY = 0;
 let clickOffsetX = 0;
 let clickOffsetY = 0;
+let isScrollDragging = false;
+let scrollStartX = 0;       
+let scrollStartLeft = 0; 
    
 function clamp(number, min, max) {
       return Math.min(Math.max(number, min), max);
@@ -85,30 +88,63 @@ function dropCube() {
 	isDragging = false;
 }
 
+function startScrollDrag(mouseEvent) {
+    isScrollDragging = true;
+    scrollStartX    = mouseEvent.pageX;               
+    scrollStartLeft = itemsContainer.scrollLeft;    
+    itemsContainer.classList.add('active');
+}
+
+function scrollContainerWithMouse(mouseEvent) {
+    if (!isScrollDragging) return;
+    const distanceMoved = mouseEvent.pageX - scrollStartX;
+    itemsContainer.scrollLeft = scrollStartLeft - distanceMoved;
+}
+
+function stopScrollDrag() {
+    isScrollDragging = false;
+    itemsContainer.classList.remove('active');
+}
+
 const itemsContainer = document.querySelector('.items');
+// when mousedown is on the CONTAINER BACKGROUND (not a cube) → start scroll drag
 itemsContainer.addEventListener('mousedown', function(mouseEvent) {
-	const clickedCube = mouseEvent.target.closest('.item');
-	if(!clickedCube) return;
-	startWatchingForDrag(mouseEvent, clickedCube);
-})
+    const clickedCube = mouseEvent.target.closest('.item');
+
+    if (clickedCube) {
+        // clicked a cube → do cube drag as before
+        startWatchingForDrag(mouseEvent, clickedCube);
+    } else {
+        // clicked the container background → do scroll drag
+        startScrollDrag(mouseEvent);
+    }
+});
 
 document.addEventListener('mousemove', function(mouseEvent) {
-	if(!selectedCube) return;
-	if(!isDragging){
-       const distanceMoved = getDistanceMoved(mouseEvent.clientX, mouseEvent.clientY);
-		if(distanceMoved>DRAG_THRESHOLD){
+
+    if (isScrollDragging) {
+        scrollContainerWithMouse(mouseEvent);
+        return;
+    }
+
+    if (!selectedCube) return;
+    if (!isDragging) {
+        const distanceMoved = getDistanceMoved(mouseEvent.clientX, mouseEvent.clientY);
+        if (distanceMoved > DRAG_THRESHOLD) {
             pickUpCube(selectedCube);
-		}
-	}
-	if(isDragging){
-       moveCubeToMouse(mouseEvent);
-	}
+        }
+    }
+    if (isDragging) {
+        moveCubeToMouse(mouseEvent);
+    }
 });
 
 document.addEventListener('mouseup', function() {
-	dropCube();
-})
+    stopScrollDrag();
+    dropCube();
+});
 
 document.addEventListener('mouseleave', function() {
-	dropCube();
-})
+    stopScrollDrag();
+    dropCube();
+});
