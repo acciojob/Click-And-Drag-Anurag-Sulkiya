@@ -51,24 +51,26 @@ function startWatchingForDrag(mouseEvent, cube) {
     }
 
 function moveCubeToMouse(mouseEvent) {
-	if(!isDragging || !selectedCube) return;
-	const conatiner = selectedCube.closest('.items');
-	const conatinerPosition = conatiner.getBoundingClientReact();
-	const padding = getContainerPadding(conatiner);
-	const desiredLeft = mouseEvent.clientX - conatinerPosition.top -clickOffsetY;
-	const cubeWidth = selectedCube.offsetWidth;
-	const cubeHeight = selectedCube.offsetHeight;
+    if (!isDragging || !selectedCube) return;
 
-	const leftBoundary = padding.left;
-	const topBoundary = padding.top;
-	const rightBoundary = conatiner.scrollWidth - padding.right - cubeWidth;
-	const bottomBoundary = conatiner.clientHeight - padding.bottom - cubeHeight;
+    const container = selectedCube.closest('.items');
+    const containerPosition = container.getBoundingClientRect();
+    const padding = getContainerPadding(container);
+    const desiredLeft = mouseEvent.clientX - containerPosition.left - clickOffsetX + container.scrollLeft;
+    const desiredTop = mouseEvent.clientY - containerPosition.top - clickOffsetY;
+    const cubeWidth  = selectedCube.offsetWidth;
+    const cubeHeight = selectedCube.offsetHeight;
 
-	const safeLeft = clamp(desiredLeft, leftBoundary, rightBoundary);
-	const safeTop = clamp(desiredTop, topBoundary, bottomBoundary);
+    const leftBoundary   = padding.left;
+    const topBoundary    = padding.top;
+    const rightBoundary  = container.scrollWidth  - padding.right  - cubeWidth;
+    const bottomBoundary = container.clientHeight - padding.bottom - cubeHeight;
 
-	selectedCube.style.left = safeLeft + "px";
-	selectedCube.style.top = safeTop + "px";
+    const safeLeft = clamp(desiredLeft, leftBoundary, rightBoundary);
+    const safeTop  = clamp(desiredTop,  topBoundary,  bottomBoundary);
+
+    selectedCube.style.left = safeLeft + 'px';
+    selectedCube.style.top  = safeTop  + 'px';
 }
 
 function dropCube() {
