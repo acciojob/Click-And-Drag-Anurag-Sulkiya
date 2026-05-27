@@ -123,7 +123,7 @@ itemsContainer.addEventListener('mousedown', function(mouseEvent) {
     }
 });
 
-document.addEventListener('mousemove', function(mouseEvent) {
+itemsContainer.addEventListener('mousemove', function(mouseEvent) {
     if (isScrollDragging) {
         scrollContainerWithMouse(mouseEvent);
     }
