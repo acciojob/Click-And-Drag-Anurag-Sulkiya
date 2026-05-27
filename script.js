@@ -97,21 +97,26 @@ function dropCube() {
 
 function startScrollDrag(mouseEvent) {
     isScrollDragging = true;
-    scrollStartX     = mouseEvent.pageX;              
-    scrollStartLeft  = itemsContainer.scrollLeft;   
+    scrollStartX    = getMouseX(mouseEvent); 
+    scrollStartLeft = itemsContainer.scrollLeft;
     itemsContainer.classList.add('active');
 }
 
 function scrollContainerWithMouse(mouseEvent) {
     if (!isScrollDragging) return;
-    const distanceMoved = mouseEvent.pageX - scrollStartX;
+    const currentX      = getMouseX(mouseEvent); 
+    const distanceMoved = currentX - scrollStartX;
     itemsContainer.scrollLeft = scrollStartLeft - distanceMoved;
 }
-
 function stopScrollDrag() {
     isScrollDragging = false;
     itemsContainer.classList.remove('active');
 }
+
+function getMouseX(mouseEvent) {
+    return mouseEvent.pageX || mouseEvent.clientX || 0;
+}
+
 
 const itemsContainer = document.querySelector('.items');
 
@@ -148,3 +153,4 @@ document.addEventListener('mouseleave', function() {
     stopScrollDrag();
     dropCube();
 });
+
