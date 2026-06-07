@@ -160,3 +160,4 @@ document.addEventListener('mouseleave', function() {
     stopScrollDrag();
     dropCube();
 });
+
